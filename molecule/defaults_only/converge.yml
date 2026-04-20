@@ -1,0 +1,7 @@
+---
+- name: Converge with defaults
+  hosts: all
+  become: true
+
+  roles:
+    - role: eirikns.ufw

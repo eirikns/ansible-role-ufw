@@ -1,0 +1,43 @@
+---
+- name: Converge
+  hosts: all
+  become: true
+
+  vars:
+    ufw_default_policy: deny
+    ufw_logging: 'low'
+    ufw_rules:
+      - rule: allow
+        direction: in
+        src: any
+        to_port: '80'
+        proto: tcp
+      - rule: allow
+        direction: in
+        src: any
+        to_port: '443'
+        proto: tcp
+    ufw_apps:
+      - MoleculeTestApp
+    ufw_block_cidrs:
+      - '10.255.255.0/24'
+
+  pre_tasks:
+    - name: Ensure UFW applications directory exists
+      ansible.builtin.file:
+        path: /etc/ufw/applications.d
+        state: directory
+        mode: '0755'
+
+    - name: Create custom UFW app profile for testing
+      ansible.builtin.copy:
+        dest: /etc/ufw/applications.d/molecule-test-app
+        content: |
+          [MoleculeTestApp]
+          title=Molecule Test App
+          description=A custom app profile for molecule testing
+          ports=8080/tcp
+        mode: '0644'
+
+  roles:
+    - role: eirikns.ufw

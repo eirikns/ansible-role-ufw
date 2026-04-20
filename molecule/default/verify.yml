@@ -1,0 +1,81 @@
+---
+- name: Verify
+  hosts: all
+  become: true
+
+  tasks:
+    - name: Get UFW status
+      ansible.builtin.command: ufw status verbose
+      register: ufw_status
+      changed_when: false
+
+    - name: Print UFW status for debugging
+      ansible.builtin.debug:
+        var: ufw_status.stdout
+
+    - name: Verify UFW is active
+      ansible.builtin.assert:
+        that:
+          - "'Status: active' in ufw_status.stdout"
+
+    - name: Verify default incoming policy is deny
+      ansible.builtin.assert:
+        that:
+          - "'deny (incoming)' in ufw_status.stdout"
+
+    - name: Verify default outgoing policy is allow
+      ansible.builtin.assert:
+        that:
+          - "'allow (outgoing)' in ufw_status.stdout"
+
+    - name: Verify logging is set to low
+      ansible.builtin.assert:
+        that:
+          - "'Logging: on (low)' in ufw_status.stdout"
+
+    - name: Verify SSH (port 22) is always allowed
+      ansible.builtin.assert:
+        that:
+          - "ufw_status.stdout is regex('22/tcp\\s+ALLOW IN\\s+Anywhere')"
+        fail_msg: "SSH port 22 is not allowed — risk of lockout!"
+
+    - name: Verify port 80 is allowed
+      ansible.builtin.assert:
+        that:
+          - "ufw_status.stdout is regex('Anywhere\\s+ALLOW IN\\s+80/tcp')"
+
+    - name: Verify port 443 is allowed
+      ansible.builtin.assert:
+        that:
+          - "ufw_status.stdout is regex('Anywhere\\s+ALLOW IN\\s+443/tcp')"
+
+    - name: Verify MoleculeTestApp app is allowed
+      ansible.builtin.assert:
+        that:
+          - "ufw_status.stdout is regex('MoleculeTestApp.*ALLOW IN\\s+Anywhere')"
+
+    - name: Verify blocked CIDR is denied
+      ansible.builtin.assert:
+        that:
+          - "ufw_status.stdout is regex('Anywhere\\s+DENY IN\\s+10\\.255\\.255\\.0/24')"
+
+    - name: Get UFW numbered rules
+      ansible.builtin.command: ufw status numbered
+      register: ufw_numbered
+      changed_when: false
+
+    - name: Print UFW numbered rules for debugging
+      ansible.builtin.debug:
+        var: ufw_numbered.stdout
+
+    - name: Verify blocked CIDR appears before allow rules
+      ansible.builtin.assert:
+        that:
+          - "ufw_numbered.stdout.find('10.255.255.0/24') < ufw_numbered.stdout.find('80/tcp')"
+        fail_msg: "CIDR block rule is not inserted before allow rules"
+
+    - name: Verify port 3306 (MySQL) is NOT allowed
+      ansible.builtin.assert:
+        that:
+          - "'3306' not in ufw_status.stdout"
+        fail_msg: "Port 3306 is unexpectedly open!"

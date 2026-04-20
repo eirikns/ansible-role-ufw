@@ -1,0 +1,47 @@
+---
+- name: Install ufw
+  ansible.builtin.apt:
+    name: 'ufw'
+    update_cache: true
+    cache_valid_time: 3600
+
+- name: Allow port 22 (ssh) by default
+  community.general.ufw:
+    rule: allow
+    port: '22'
+    proto: tcp
+
+- name: Enable ufw and apply default policy ({{ ufw_default_policy }})
+  community.general.ufw:
+    state: enabled
+    policy: "{{ ufw_default_policy }}"
+
+- name: Set logging
+  community.general.ufw:
+    logging: "{{ ufw_logging }}"
+
+- name: Enable uwf application rules
+  community.general.ufw:
+    rule: allow
+    app: "{{ item }}"
+  with_items: "{{ ufw_apps }}"
+
+- name: Block IP CIDRS
+  community.general.ufw:
+    rule: deny
+    src: "{{ item }}"
+    insert: 1
+    insert_relative_to: zero
+  with_items: "{{ ufw_block_cidrs }}"
+
+- name: Apply rules
+  community.general.ufw:
+    rule: "{{ item.rule }}"
+    interface: "{{ item.interface | default(None) }}"
+    direction: "{{ item.direction }}"
+    proto: "{{ item.proto | default(None) }}"
+    src: "{{ item.src | default(None) }}"
+    from_port: "{{ item.from_port | default(None) }}"
+    dest: "{{ item.dest | default(None) }}"
+    to_port: "{{ item.to_port | default(None) }}"
+  with_items: "{{ ufw_rules }}"

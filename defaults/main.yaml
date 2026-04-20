@@ -1,0 +1,31 @@
+---
+# List of IP CIDRs to block. Items should be valid IP CIDR strings.
+ufw_block_cidrs: []
+
+# List of UFW application profiles to allow.
+ufw_apps: []
+
+# The default UFW policy (e.g., 'allow', 'deny', 'reject').
+ufw_default_policy: allow
+
+# List of specific UFW rules to apply. Each item can contain:
+#   rule (required): 'allow', 'deny', 'reject', etc.
+#   direction (required): 'in', 'out', 'routed'
+#   interface (optional): the network interface
+#   proto (optional): 'tcp', 'udp', 'any', etc.
+#   src (optional): source IP/CIDR
+#   from_port (optional): source port
+#   dest (optional): destination IP/CIDR
+#   to_port (optional): destination port
+ufw_rules: []
+#  - rule: allow
+#    direction: in
+#    interface: eth0
+#    proto: tcp
+#    src: any
+#    from_port: '80'
+#    dest: 10.0.0.1
+#    to_port: '80'
+
+# The UFW logging level (e.g., 'on', 'off', 'low', 'medium', 'high', 'full').
+ufw_logging: 'off'
