@@ -42,12 +42,12 @@
     - name: Verify port 80 is allowed
       ansible.builtin.assert:
         that:
-          - "ufw_status.stdout is regex('Anywhere\\s+ALLOW IN\\s+80/tcp')"
+          - "ufw_status.stdout is regex('80/tcp\\s+ALLOW IN\\s+Anywhere')"
 
     - name: Verify port 443 is allowed
       ansible.builtin.assert:
         that:
-          - "ufw_status.stdout is regex('Anywhere\\s+ALLOW IN\\s+443/tcp')"
+          - "ufw_status.stdout is regex('443/tcp\\s+ALLOW IN\\s+Anywhere')"
 
     - name: Verify MoleculeTestApp app is allowed
       ansible.builtin.assert:

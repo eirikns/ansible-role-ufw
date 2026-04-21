@@ -37,11 +37,11 @@
 - name: Apply rules
   community.general.ufw:
     rule: "{{ item.rule }}"
-    interface: "{{ item.interface | default(None) }}"
+    interface: "{{ item.interface | default(omit) }}"
     direction: "{{ item.direction }}"
-    proto: "{{ item.proto | default(None) }}"
-    src: "{{ item.src | default(None) }}"
-    from_port: "{{ item.from_port | default(None) }}"
-    dest: "{{ item.dest | default(None) }}"
-    to_port: "{{ item.to_port | default(None) }}"
+    proto: "{{ item.proto | default(omit) }}"
+    src: "{{ item.src | default(omit) }}"
+    from_port: "{{ item.from_port | default(omit) }}"
+    dest: "{{ item.dest | default(omit) }}"
+    to_port: "{{ item.to_port | default(omit) }}"
   with_items: "{{ ufw_rules }}"
