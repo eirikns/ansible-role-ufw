@@ -20,7 +20,7 @@
   community.general.ufw:
     logging: "{{ ufw_logging }}"
 
-- name: Enable uwf application rules
+- name: Enable ufw application rules
   community.general.ufw:
     rule: allow
     app: "{{ item }}"
