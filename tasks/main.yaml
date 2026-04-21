@@ -1,4 +1,14 @@
 ---
+- name: Validate input variables
+  ansible.builtin.assert:
+    that:
+      - ufw_default_policy in ['allow', 'deny', 'reject']
+      - ufw_logging in ['on', 'off', 'low', 'medium', 'high', 'full']
+    fail_msg: >-
+      Invalid variable value: ufw_default_policy must be one of allow/deny/reject
+      (got '{{ ufw_default_policy }}'), and ufw_logging must be one of
+      on/off/low/medium/high/full (got '{{ ufw_logging }}').
+
 - name: Install ufw
   ansible.builtin.apt:
     name: 'ufw'
