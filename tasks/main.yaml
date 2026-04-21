@@ -24,7 +24,7 @@
   community.general.ufw:
     rule: allow
     app: "{{ item }}"
-  with_items: "{{ ufw_apps }}"
+  loop: "{{ ufw_apps }}"
 
 - name: Block IP CIDRS
   community.general.ufw:
@@ -32,7 +32,7 @@
     src: "{{ item }}"
     insert: 1
     insert_relative_to: zero
-  with_items: "{{ ufw_block_cidrs }}"
+  loop: "{{ ufw_block_cidrs }}"
 
 - name: Apply rules
   community.general.ufw:
@@ -44,4 +44,4 @@
     from_port: "{{ item.from_port | default(omit) }}"
     dest: "{{ item.dest | default(omit) }}"
     to_port: "{{ item.to_port | default(omit) }}"
-  with_items: "{{ ufw_rules }}"
+  loop: "{{ ufw_rules }}"
