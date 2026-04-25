@@ -10,20 +10,24 @@ ufw_default_policy: allow
 
 # List of specific UFW rules to apply. Each item can contain:
 #   rule (required): 'allow', 'deny', 'reject', etc.
-#   direction (required): 'in', 'out', 'routed'
+#   direction (optional): 'in', 'out', 'routed' — defaults to 'in'
 #   interface (optional): the network interface
 #   proto (optional): 'tcp', 'udp', 'any', etc.
+#   port (optional): port number or name — shorthand when direction is 'in'
 #   src (optional): source IP/CIDR
-#   from_port (optional): source port
+#   from_port (optional): source port (use with src)
 #   dest (optional): destination IP/CIDR
-#   to_port (optional): destination port
+#   to_port (optional): destination port (use with dest)
 ufw_rules: []
+#  - rule: allow
+#    port: '80'
+#    proto: tcp
 #  - rule: allow
 #    direction: in
 #    interface: eth0
 #    proto: tcp
-#    src: any
-#    from_port: '80'
+#    src: 10.0.0.0/8
+#    from_port: '1024'
 #    dest: 10.0.0.1
 #    to_port: '80'
 

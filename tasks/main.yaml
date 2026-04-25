@@ -47,9 +47,10 @@
 - name: Apply rules
   community.general.ufw:
     rule: "{{ item.rule }}"
+    direction: "{{ item.direction | default(omit) }}"
     interface: "{{ item.interface | default(omit) }}"
-    direction: "{{ item.direction }}"
     proto: "{{ item.proto | default(omit) }}"
+    port: "{{ item.port | default(omit) }}"
     src: "{{ item.src | default(omit) }}"
     from_port: "{{ item.from_port | default(omit) }}"
     dest: "{{ item.dest | default(omit) }}"
